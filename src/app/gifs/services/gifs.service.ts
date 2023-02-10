@@ -18,7 +18,14 @@ export class GifsService {
   }
 
   // injectamos el HttpClient que es un observable
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+
+    this._historial = JSON.parse(localStorage.getItem('historial')!) || [];
+    // if (localStorage.getItem('historial')) {
+    //   this._historial = JSON.parse(localStorage.getItem('historial')!);
+    // }
+
+  }
 
   buscarGifs(query: string) {
 
@@ -28,8 +35,11 @@ export class GifsService {
       this._historial.unshift(query)
       this._historial = this._historial.splice(0, 10)
 
+      // usar localstorage - JSON.stringify lo cambia a string
+      localStorage.setItem('historial', JSON.stringify(this._historial))
+
     }
-    
+
     this.http.get<SearchGifsResponse>(`http://api.giphy.com/v1/gifs/search?api_key=dWbtzvoxXfl6EOBk4Nsnc74t7AQXzrcO&q=${query}&limit=10&lang=en`)
       .subscribe((resp) => {
         console.log(resp.data)
