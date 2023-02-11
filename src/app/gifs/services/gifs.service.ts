@@ -10,7 +10,7 @@ export class GifsService {
   private apiKey: string = 'dWbtzvoxXfl6EOBk4Nsnc74t7AQXzrcO';
   private _historial: string[] = [];
 
-  public resultados: Gif[] = []
+  public resultados: Gif[] = [];
 
   get historial() {
     // this._historial = this._historial.splice(0, 10)
@@ -21,6 +21,7 @@ export class GifsService {
   constructor(private http: HttpClient) {
 
     this._historial = JSON.parse(localStorage.getItem('historial')!) || [];
+    this.resultados = JSON.parse(localStorage.getItem('resultados')!) || [];
     // if (localStorage.getItem('historial')) {
     //   this._historial = JSON.parse(localStorage.getItem('historial')!);
     // }
@@ -36,14 +37,16 @@ export class GifsService {
       this._historial = this._historial.splice(0, 10)
 
       // usar localstorage - JSON.stringify lo cambia a string
-      localStorage.setItem('historial', JSON.stringify(this._historial))
+      localStorage.setItem('historial', JSON.stringify(this._historial));
+
 
     }
 
-    this.http.get<SearchGifsResponse>(`http://api.giphy.com/v1/gifs/search?api_key=dWbtzvoxXfl6EOBk4Nsnc74t7AQXzrcO&q=${query}&limit=10&lang=en`)
+    this.http.get<SearchGifsResponse>(`http://api.giphy.com/v1/gifs/search?api_key=${this.apiKey}&q=${query}&limit=10&lang=en`)
       .subscribe((resp) => {
         console.log(resp.data)
         this.resultados = resp.data;
+        localStorage.setItem('resultados', JSON.stringify(this.resultados));
       })
 
 
